@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import AddTodo from './AddTodo';
+import TodoElement from './TodoElement';
 import './TodoApp.css';
 
 class TodoApp extends Component {
@@ -10,27 +12,42 @@ class TodoApp extends Component {
     }
   }
 
-  onChange(e) {
-    this.setState({
-      value: e.target.value
-    })
+  onChange(key_value) {
+    this.setState(key_value)
   }
 
-  add() {
+  add(element) {
     this.setState({
-      todoList: this.state.todoList.concat(this.state.value),
+      todoList: this.state.todoList.concat(element),
       value: '',
     })
   }
 
+  handleDelete(id) {
+    let todoList = this.state.todoList.concat();
+    let index = 0;
+    todoList.map((element, idx) => {
+      if(element.id === id) {
+        index  = idx;
+      }
+    })
+    todoList.splice(index, 1);
+    this.setState({todoList: todoList})
+  }
+
   render() {
-    const todoListNode = this.state.todoList.map((todo, idx) => {
-      return <li key={idx}>{todo}</li>
+    const todoListNode = this.state.todoList.map(element => {
+      return (
+        <TodoElement element={element} key={element.id} onDelete={() => this.handleDelete()}/>
+      )
     })
     return <div>
       <h1>TO DO APP</h1>
-      <input type="text" value={this.state.value} onChange={e => this.onChange(e)} />
-      <button onClick={() => this.add()}>追加</button>
+      <AddTodo 
+        {...this.state}
+        onChange={e => this.onChange(e)}
+        add={(element) => this.add(element)}
+      />
       <ul>
        {todoListNode}
       </ul>
